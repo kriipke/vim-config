@@ -8,13 +8,32 @@ silent! while 0
   set nocompatible
 silent! endwhile
 
+"set runtimepath=$/usr/local/share/vim/vimfiles,/usr/local/share/vim/vim81,XDG_CONFIG_HOME/vim,$XDG_CONFIG_HOME/vim/after,$VIM,$VIMRUNTIME
+let $MYVIMRC="$XDG_CONFIG_HOME/vim/vimrc"
 set directory=$XDG_CACHE_HOME/vim,~/,/tmp
+
 set backup
 set backupdir=$XDG_CACHE_HOME/vim,~/,/tmp
+
 set viminfo='20,\"50	
 set viminfo+=n$XDG_CACHE_HOME/vim/viminfo
-" set runtimepath=/usr/local/share/vim/vimfiles,/usr/local/share/vim/vim81,$XDG_CONFIG_HOME/vim,$XDG_CONFIG_HOME/vim/after,$VIM,$VIMRUNTIME
-let $MYVIMRC="$XDG_CONFIG_HOME/vim/vimrc"
+
+if &term=="xterm"
+     set t_Co=8
+     set t_Sb=[4%dm
+     set t_Sf=[3%dm
+elseif &term=="screen"
+     set t_Co=256
+     set background=dark
+     let g:PaperColor_Theme_Options = {
+       \   'theme': {
+       \     'default': {
+       \       'transparent_background': 1
+       \     }
+       \   }
+       \ }
+     colorscheme PaperColor
+endif
 
 set history=5000	
 set ruler		" show the cursor position all the time
@@ -71,22 +90,6 @@ endif
 
 filetype plugin on
 
-if &term=="xterm"
-     set t_Co=8
-     set t_Sb=[4%dm
-     set t_Sf=[3%dm
-elseif &term=="screen"
-     set t_Co=256
-     set background=dark
-     let g:PaperColor_Theme_Options = {
-       \   'theme': {
-       \     'default': {
-       \       'transparent_background': 1
-       \     }
-       \   }
-       \ }
-     colorscheme PaperColor
-endif
 
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
