@@ -1,38 +1,79 @@
 " vim settings preferred - this must be first
 if &compatible
-  set nocompatible
+set nocompatible
 endif
 
 " trick to ensure nocompat is set in the absence of +eval feature
 silent! while 0
-  set nocompatible
+set nocompatible
 silent! endwhile
 
-"set runtimepath=$/usr/local/share/vim/vimfiles,/usr/local/share/vim/vim81,XDG_CONFIG_HOME/vim,$XDG_CONFIG_HOME/vim/after,$VIM,$VIMRUNTIME
-let $MYVIMRC="$XDG_CONFIG_HOME/vim/vimrc"
-set directory=$XDG_CACHE_HOME/vim,~/,/tmp
+filetype off                  " required
 
-set backup
-set backupdir=$XDG_CACHE_HOME/vim,~/,/tmp
+set rtp+=/usr/share/vim/vimfiles/bundle/Vundle.vim
+call vundle#begin('/usr/share/vim/vimfiles/bundle/')
+Plugin 'VundleVim/Vundle.vim'
+"Plugin 'rkitover/vimpager'
+Plugin 'itchyny/lightline.vim'
+Plugin 'maximbaz/lightline-ale'
+Plugin 'dense-analysis/ale'
+Plugin 'tpope/vim-fugitive'
+Plugin 'junegunn/fzf.vim'
+Plugin 'tpope/vim-commentary'
+Plugin 'tpope/vim-surround'
+Plugin 'mattn/emmet-vim'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'sirver/ultisnips'
+Plugin 'chrisbra/csv.vim'
+Plugin 'vim-scripts/bats.vim'
+if ! $SSH_CLIENT
+    Plugin 'Lokaltog/vim-monotone'
+    Plugin 'mswift42/vim-themes'
+    Plugin 'flazz/vim-colorschemes'
+    Plugin 'tmux-plugins/vim-tmux'
+    Plugin 'tmux-plugins/vim-tmux-focus-events'
+    Plugin 'file:///home/l0xy/src/xandria.vim'
+endif
+call vundle#end()            " required
 
+filetype plugin indent on    " required
+syntax on
+
+let g:lightline = {
+\ 'active': {
+\   'left': [ [ 'mode', 'paste' ],
+\             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+\ },
+\ 'component_function': {
+\   'gitbranch': 'FugitiveHead'
+\ },
+\ }
+
+if $XDG_CACHE_HOME
+  set backup
+  silent !mkdir -p $XDG_CACHE_HOME/vim
+  set viminfo+=n$XDG_CACHE_HOME/vim/viminfo
+  set backupdir=$XDG_CACHE_HOME/vim
+endif
 set viminfo='20,\"50	
-set viminfo+=n$XDG_CACHE_HOME/vim/viminfo
+
+if &term=="linux"
+  colorscheme default
+else
+  colorscheme blaquemagick
+  let g:lightline = {
+    \ 'colorscheme': 'seoul256'
+    \ }
+endif
 
 if &term=="xterm"
-     set t_Co=8
-     set t_Sb=[4%dm
-     set t_Sf=[3%dm
+  set t_Co=8
+  set t_Sb=[4%dm
+  set t_Sf=[3%dm
 elseif &term=="screen"
-     set t_Co=256
-     set background=dark
-     let g:PaperColor_Theme_Options = {
-       \   'theme': {
-       \     'default': {
-       \       'transparent_background': 1
-       \     }
-       \   }
-       \ }
-     colorscheme PaperColor
+  set t_Co=16
+  set t_Sb=[4%dm
+  set t_Sf=[3%dm
 endif
 
 set history=5000	
@@ -49,46 +90,32 @@ set ttimeoutlen=25	" wait up to 50ms after Esc for special key
 " Show @@@ in the last line if it is truncated.
 set display=truncate
 
-" Show a few lines of context around the cursor.  Note that this makes the
-" text scroll if you mouse-click near the start or end of the window.
-set scrolloff=5
 
 " Do incremental searching when it's possible to timeout.
 " ( Makes search act like search in modern browsers )
 set incsearch
 if has('reltime')
-  set incsearch
+set incsearch
 endif
 
 " do not recognize octal numbers for Ctrl-A and Ctrl-X
 " most users find it confusing
 set nrformats-=octal
 
-
 if has("cscope") && filereadable("/usr/bin/cscope")
-   set csprg=/usr/bin/cscope
-   set csto=0
-   set cst
-   set nocsverb
-   " add any database in current directory
-   if filereadable("cscope.out")
-      cs add $PWD/cscope.out
-   " else add database pointed to by environment
-   elseif $CSCOPE_DB != ""
-      cs add $CSCOPE_DB
-   endif
-   set csverb
+set csprg=/usr/bin/cscope
+set csto=0
+set cst
+set nocsverb
+" add any database in current directory
+if filereadable("cscope.out")
+  cs add $PWD/cscope.out
+" else add database pointed to by environment
+elseif $CSCOPE_DB != ""
+  cs add $CSCOPE_DB
 endif
-
-" Switch syntax highlighting on, when the terminal has colors
-" Also switch on highlighting the last used search pattern.
-if &t_Co > 2 || has("gui_running")
-  syntax on
-  let c_comment_strings=1
-  set hlsearch
+set csverb
 endif
-
-filetype plugin on
 
 
 " Convenient command to see the difference between the current buffer and the
@@ -96,48 +123,27 @@ filetype plugin on
 " Only define it when not defined already.
 " Revert with: ":delcommand DiffOrig".
 if !exists(":DiffOrig")
-  command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
-		  \ | wincmd p | diffthis
+command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+      \ | wincmd p | diffthis
 endif
 
 if has('langmap') && exists('+langremap')
-  " Prevent that the langmap option applies to characters that result from a
-  " mapping.  If set (default), this may break plugins (but it's backward
-  " compatible).
-  set nolangremap
+" Prevent that the langmap option applies to characters that result from a
+" mapping.  If set (default), this may break plugins (but it's backward
+" compatible).
+set nolangremap
 endif
 
-filetype off                  " required
 
-set rtp+=/usr/share/vim/vimfiles/bundle/Vundle.vim
-call vundle#begin('/usr/share/vim/vimfiles/bundle/')
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'chrisbra/Colorizer'
-Plugin 'chrisbra/csv.vim'
-Plugin 'tpope/vim-fugitive'
-Plugin 'nblock/vim-dokuwiki'
-" Plugin 'christoomey/vim-tmux-navigator'
-Plugin 'junegunn/fzf.vim'
-Plugin 'tpope/vim-surround'
-Plugin 'mattn/emmet-vim'
-Plugin 'Valloric/YouCompleteMe'
-" let g:ycm_server_python_interpreter = 'ycmd-python'
-Plugin 'sirver/ultisnips'
-Plugin 'flazz/vim-colorschemes'
-Plugin 'mswift42/vim-themes'
-call vundle#end()            " required
-filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
-"filetype plugin on
-"
-let g:colorizer_auto_filetype='css,html,vim'
-let g:dokuwiki_fenced_languages = ['css', 'bash', 'html', 'yaml']
+" Format the status line
+set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
+
+let g:dokuwiki_fenced_languages = ['css', 'sh', 'html', 'yaml']
 let g:user_emmet_leader_key='<C-f>'
 
-let mapleader = ";"
 
-" Set 7 lines to the cursor - when moving vertically using j/k
-set so=7
+" always keep at least 7 lines above/below the cursor
+set scrolloff=7
 
 " Avoid garbled characters in Chinese language windows OS
 let $LANG='en' 
@@ -167,22 +173,17 @@ set ffs=unix,dos,mac
 
 " TABS & LINE BREAKS
 
-" use spaces instead of tabs
 set expandtab
-" be smart when using tabs ;)
 set smarttab
-
-" 1 tab == 4 spaces
 set shiftwidth=4
 set tabstop=4
 
-if has("autocmd")
-    autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
-    autocmd FileType bash setlocal shiftwidth=4 tabstop=4
-    autocmd FileType css setlocal shiftwidth=2 tabstop=2
-    autocmd FileType html setlocal shiftwidth=2 tabstop=2
-    autocmd FileType yaml setlocal shiftwidth=2 tabstop=2
-endif
+let g:netrw_banner=0
+let g:netrw_altv=1
+let g:netrw_winsize=25
+let g:netrw_bannerw_liststyle=3
+let g:netrw_browse_split=1
+
 
 " linebreak on 500 characters
 set lbr
@@ -199,10 +200,7 @@ au TabLeave * let g:lasttab = tabpagenr()
 " Always show the status line
 set laststatus=2
 
-" Format the status line
-" set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
-
-" Add a bit extra margin to the left
+" LINE NUMBERS
 set foldcolumn=1
 set number
 set relativenumber
@@ -210,54 +208,51 @@ set numberwidth=5
 silent
 
 " ====== CUSTOM KEYBINDINGS ======
-" fzf search & go-to line
-nmap <leader>g :Lines<cr>
-" fzf search & go-to line in current buffer
-nmap <leader>gb :BLines<cr>
-" fzf search history
-nmap <leader>r :History:<cr>
+
+let mapleader = ";"
+
+" fzf bindings
+nmap <leader>/ :Lines<cr>
+nmap <leader>b/ :BLines<cr>
+nmap <leader>h/ :History:<cr>
+nmap <leader>f/ :Files<cr>
 
 " Fast saving
 nmap <leader>w :w!<cr>
-" fzf find files
-nmap <leader>ff :Files<cr>
 
-" " SEE IF THIS OVERWRITES ANY IMPRTANT BINDINGS BEFORE LEAVING THIS IN HERE...
-" " easier half-page-up
-" nmap <leader>m <C-U>
-" " easier half-page-down
-" nmap <leader>, <C-D>
+" split window
+nmap <leader>sj :belowright split<cr>
+nmap <leader>sk :split<cr>
+nmap <leader>sh :vsplit<cr>
+nmap <leader>sl :belowright vsplit<cr>
 
-" split horizontally
-nmap <leader>sh :split<cr>
-" split vertically 
-nmap <leader>sv :vsplit<cr>
+" new window (split )
+nmap <leader>J :belowright new +Files.<cr>
+nmap <leader>K :new +Files.<cr>
+nmap <leader>H :vnew +Files.<cr>
+nmap <leader>L :belowright vnew +Files.<cr>
 
-" nav pane up
+" navigate windows
 nmap <leader>k <C-w>k
-" nav pane down
 nmap <leader>j <C-w>j
-" nav pane left
 nmap <leader>h <C-w>h
-" nav pane right
 nmap <leader>l <C-w>l
+nmap <leader><space> <C-w>P
 
-""" RESIZING PANES FIGURE OUT 
-"" resize pane up
-"nmap <leader>k <C-w>
-"" resize pane down
-"nmap <leader>j <C-w>
-"" resize pane left
-"nmap <leader>h <C-w>
-"" resize pane right
-"nmap <leader>l <C-w>
+" resize window
+nmap <leader><C-j> <C-w>-
+nmap <leader><C-k> <C-w>+
+nmap <leader><C-h> <C-w><
+nmap <leader><C-l> <C-w>>
 
 " pane exit
-nmap <leader>sd <C-w>q
+nmap <leader>D <C-w>q
 " pane fullscreen
-nmap <leader>l <C-w>l
+nmap <leader>F <C-w>l
 
-" :W sudo saves the file 
-" (useful for handling the permission-denied error)
+nmap <leader>c :Commentary<cr>
+
+nmap <leader>e :Vex<cr>
+
 command W w !sudo tee % > /dev/null
 
