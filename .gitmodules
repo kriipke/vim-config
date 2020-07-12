@@ -1,3 +1,6 @@
 [submodule "/usr/share/vim/vimfiles/bundle/Vundle.vim"]
 	path = bundle/Vundle.vim
 	url = https://github.com/VundleVim/Vundle.vim
+[submodule "pack/ava/start/fzf.vim"]
+	path = pack/ava/start/fzf.vim
+	url = https://github.com/junegunn/fzf.vim

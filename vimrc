@@ -10,26 +10,51 @@ silent! endwhile
 
 filetype off                  " required
 
-set rtp+=/usr/share/vim/vimfiles/bundle/Vundle.vim
+let VIM= "/usr/local/share/vim"
+
+set rtp+=/usr/local/share/vim/bundle/Vundle.vim
 call vundle#begin('/usr/share/vim/vimfiles/bundle/')
 Plugin 'VundleVim/Vundle.vim'
 "Plugin 'rkitover/vimpager'
-Plugin 'itchyny/lightline.vim'
+
+" [[ PRODUCTIVITY ]]
+Plugin 'junegunn/fzf.vim'
+Plugin 'sirver/ultisnips'
+Plugin 'tpope/vim-surround'
+" [[ GIT INTEGRATION ]]
+Plugin 'tpope/vim-fugitive'
+
+" [[ SYSTEMD ]]
+" UNIT FILES
+Plugin 'wgwoods/vim-systemd-syntax'
+" CONFIG FILES
+" Plugin 'Matt-Deacalion/vim-systemd-syntax'
+
+" PROGRAMMING LANGAUGES
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'tpope/vim-commentary'
+" [[ LINTERS ]]
 Plugin 'maximbaz/lightline-ale'
 Plugin 'dense-analysis/ale'
-Plugin 'tpope/vim-fugitive'
-Plugin 'junegunn/fzf.vim'
-Plugin 'tpope/vim-commentary'
-Plugin 'tpope/vim-surround'
-Plugin 'mattn/emmet-vim'
-Plugin 'Valloric/YouCompleteMe'
-Plugin 'sirver/ultisnips'
-Plugin 'chrisbra/csv.vim'
+" [[ BASH ]]]
 Plugin 'vim-scripts/bats.vim'
+" [[ AsciiDoctor ]]
+Plugin 'habamax/vim-asciidoctor'
+Plugin 'jjaderberg/vim-ft-asciidoc.git'
+" [[ GO ]]
+Plugin 'fatih/vim-go'
+" [[ HTML ]]
+Plugin 'mattn/emmet-vim'
+Plugin 'othree/html5.vim'
+" [[ CSV ]]
+Plugin 'chrisbra/csv.vim'
 if ! $SSH_CLIENT
+    " [[ riceeEee ]]
+    Plugin 'itchyny/lightline.vim'
     Plugin 'Lokaltog/vim-monotone'
     Plugin 'mswift42/vim-themes'
     Plugin 'flazz/vim-colorschemes'
+    " [[ TMUX INTEGRATION ]]
     Plugin 'tmux-plugins/vim-tmux'
     Plugin 'tmux-plugins/vim-tmux-focus-events'
     Plugin 'file:///home/l0xy/src/xandria.vim'
@@ -38,6 +63,10 @@ call vundle#end()            " required
 
 filetype plugin indent on    " required
 syntax on
+
+" ALE Configuration
+" - see `:help ale-highlights`
+highlight ALEWarning ctermbg=magenta
 
 let g:lightline = {
 \ 'active': {
@@ -58,7 +87,7 @@ endif
 set viminfo='20,\"50	
 
 if &term=="linux"
-  colorscheme default
+  colorscheme h0we
 else
   colorscheme blaquemagick
   let g:lightline = {
@@ -173,14 +202,17 @@ set ffs=unix,dos,mac
 
 " TABS & LINE BREAKS
 
-set expandtab
 set smarttab
+set noexpandtab
 set shiftwidth=4
-set tabstop=4
+set softtabstop=4
+set tabstop=8
 
 let g:netrw_banner=0
-let g:netrw_altv=1
+let g:netrw_preview=1
+let g:netrw_alto=1
 let g:netrw_winsize=25
+let g:netrw_listtyle=3
 let g:netrw_bannerw_liststyle=3
 let g:netrw_browse_split=1
 
@@ -206,6 +238,11 @@ set number
 set relativenumber
 set numberwidth=5
 silent
+"
+" ====== CUSTOM COMMANDS ======
+command! PrettyPrintJSON %!python -m json.tool
+command! PrettyPrintHTML !tidy -mi -html -wrap 0 %
+command! PrettyPrintXML !tidy -mi -xml  -wrap 0 %
 
 " ====== CUSTOM KEYBINDINGS ======
 
@@ -250,7 +287,7 @@ nmap <leader>D <C-w>q
 " pane fullscreen
 nmap <leader>F <C-w>l
 
-nmap <leader>c :Commentary<cr>
+vmap <leader>c :Commentary<cr>
 
 nmap <leader>e :Vex<cr>
 
