@@ -131,7 +131,7 @@ let g:netrw_browse_split=1
 let g:lasttab = 1
 au TabLeave * let g:lasttab = tabpagenr()
 
-
+colorscheme 0o
 
 let mapleader = ";"
 
