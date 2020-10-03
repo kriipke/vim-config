@@ -23,17 +23,53 @@
 	path = pack/ava/start/ycm
 	url = https://github.com/Valloric/YouCompleteMe
 [submodule "pack/base/opt/pack/base/opt/html/emmet"]
-	path = pack/base/opt/html/emmet
+	path = pack/base/opt/emmet
 	url = https://github.com/mattn/emmet-vim
 [submodule "pack/base/opt/pack/base/opt/html/html5"]
-	path = pack/base/opt/html/html5-syntax
+	path = pack/base/opt/html5-syntax
 	url = https://github.com/othree/html5.vim
 [submodule "pack/base/opt/bash/bats"]
 	path = pack/base/opt/bash/bats
 	url = https://github.com/vim-scripts/bats.vim
 [submodule "pack/base/opt/go/go-syntax"]
-	path = pack/base/opt/go/go-syntax
+	path = pack/base/opt/go-syntax
 	url = https://github.com/fatih/vim-go
 [submodule "pack/base/opt/asciidoc/asciidoctor-syntax"]
 	path = pack/base/opt/asciidoc/asciidoctor-syntax
 	url = https://github.com/habamax/vim-asciidoctor
+[submodule "pack/base/start/asyncrun"]
+	path = pack/base/start/asyncrun
+	url = https://github.com/skywind3000/asyncrun.vim
+[submodule "pack/base/start/asynctasks"]
+	path = pack/base/start/asynctasks
+	url = https://github.com/skywind3000/asynctasks.vim
+[submodule "pack/shell/opt/vim-jq"]
+	path = pack/shell/opt/vim-jq
+	url = https://github.com/bfrg/vim-jq
+[submodule "pack/base/start/vim-polyglot"]
+	path = pack/base/start/vim-polyglot
+	url = https://github.com/sheerun/vim-polyglot
+[submodule "pack/base/start/nnn.vim"]
+	path = pack/base/start/nnn.vim
+	url = https://github.com/mcchrish/nnn.vim
+[submodule "pack/python/start/black"]
+	path = pack/base/start/black
+	url = https://github.com/psf/black
+[submodule "pack/python/start/vim-virtualenv"]
+	path = pack/python/start/vim-virtualenv
+	url = https://github.com/jmcantrell/vim-virtualenv
+[submodule "pack/base/start/patchreview"]
+	path = pack/base/start/patchreview
+	url = https://github.com/junkblocker/patchreview-vim
+[submodule "pack/base/start/devicons"]
+	path = pack/base/start/devicons
+	url = https://github.com/ryanoasis/vim-devicons
+[submodule "pack/base/start/nerdtree"]
+	path = pack/base/start/nerdtree
+	url = https://github.com/preservim/nerdtree.git
+[submodule "pack/base/start/tagbar"]
+	path = pack/base/start/tagbar
+	url = https://github.com/majutsushi/tagbar
+[submodule "pack/base/start/gutentags"]
+	path = pack/base/start/gutentags
+	url = https://github.com/ludovicchabant/vim-gutentags

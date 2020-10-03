@@ -8,37 +8,217 @@ silent! while 0
 set nocompatible
 silent! endwhile
 
+set rtp+=/usr/local/lib/fzf
+
 filetype plugin indent on
 syntax on
 
-" PLUGIN SETTINGS
+"
+" lightline
+"
+
 let g:lightline = {
-\ 'active': {
-\   'left': [ [ 'mode', 'paste' ],
-\             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
-\ },
-\ 'component_function': {
-\   'gitbranch': 'FugitiveHead'
-\ },
+\ 'separator': { 'left': '', 'right': '' },
+\ 'subseparator': { 'left': '', 'right': '' }
 \ }
-vmap <leader>c :Commentary<cr>
-nmap <leader>e :Vex<cr>
 
+let g:lightline.component = {
+\   'lineinfo': ' %3l:%-2c',
+\ }
 
+let g:lightline.component_expand = {
+  \  'linter_checking': 'lightline#ale#checking',
+  \  'linter_infos': 'lightline#ale#infos',
+  \  'linter_warnings': 'lightline#ale#warnings',
+  \  'linter_errors': 'lightline#ale#errors',
+  \  'linter_ok': 'lightline#ale#ok',
+  \ }
+let g:lightline.component_type = {
+  \     'linter_checking': 'right',
+  \     'linter_infos': 'right',
+  \     'linter_warnings': 'warning',
+  \     'linter_errors': 'error',
+  \     'linter_ok': 'right',
+  \ }
+
+let g:lightline.active = {
+\   'left': [ [ 'mode', 'paste' ],
+\             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ],
+\   'right': [[ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ],
+\	    [ 'lineinfo' ],
+\	    [ 'percent' ],
+\	    [ 'fileformat', 'fileencoding', 'filetype' ] ]
+\ }
+
+let g:lightline.component_function = {
+\   'gitbranch': 'FugitiveHead',
+\   'readonly': 'LightlineReadonly',
+\   'fugitive': 'LightlineFugitive'
+\ }
+
+let g:lightline#ale#indicator_checking = "\uf110"
+let g:lightline#ale#indicator_infos = "\uf129"
+let g:lightline#ale#indicator_warnings = "\uf071"
+let g:lightline#ale#indicator_errors = "\uf05e"
+let g:lightline#ale#indicator_ok = "\uf00c"
+
+function! LightlineReadonly()
+return &readonly ? '' : ''
+endfunction
+
+function! LightlineFugitive()
+if exists('*FugitiveHead')
+	let branch = FugitiveHead()
+	return branch !=# '' ? ''.branch : ''
+endif
+return ''
+endfunction
+
+"
+" ALE
+"
+
+nmap <silent> <C-e> <Plug>(ale_next_wrap)
+
+let g:ale_sign_error = '●'
+let g:ale_sign_warning = '.'
+
+let g:ale_fixers = {}
+let g:ale_fixers.html = ['prettier']
+let g:ale_fixers.css = ['prettier']
+let g:ale_fixers.json = ['fixjson', 'prettier', 'jq']
+let g:ale_fixers['*'] = ['remove_trailing_lines', 'trim_whitespace']
+
+"
+" NNN
+"
+
+let $NNN_TRASH=1
+let g:nnn#layout = { 'window': { 'width': 0.9, 'height': 0.6, 'highlight': 'Debug' } }
+let g:nnn#action = {
+      \ '<c-t>': 'tab split',
+      \ '<c-x>': 'split',
+      \ '<c-v>': 'vsplit' }
+
+"
+" FZF
+"
+
+let g:fzf_action = {
+  \ '<c-t>': 'tab split',
+  \ '<c-x>': 'split',
+  \ '<c-v>': 'vsplit',
+  \ '<c-q>': function('s:build_quickfix_list') }
+
+" alll this mess creates pop-up windows for :FZF commands, see:
+" --> https://github.com/junegunn/fzf.vim/issues/821
+
+fu s:snr() abort
+    return matchstr(expand('<sfile>'), '.*\zs<SNR>\d\+_')
+endfu
+let s:snr = get(s:, 'snr', s:snr())
+let g:fzf_layout = {'window': 'call '..s:snr..'fzf_window(0.9, 0.6, "Comment")'}
+
+fu s:fzf_window(width, height, border_highlight) abort
+    let width = float2nr(&columns * a:width)
+    let height = float2nr(&lines * a:height)
+    let row = float2nr((&lines - height) / 2)
+    let col = float2nr((&columns - width) / 2)
+    let top = '┌' . repeat('─', width - 2) . '┐'
+    let mid = '│' . repeat(' ', width - 2) . '│'
+    let bot = '└' . repeat('─', width - 2) . '┘'
+    let border = [top] + repeat([mid], height - 2) + [bot]
+    if has('nvim')
+        let frame = s:create_float(a:border_highlight, {
+            \ 'row': row,
+            \ 'col': col,
+            \ 'width': width,
+            \ 'height': height,
+            \ })
+        call nvim_buf_set_lines(frame, 0, -1, v:true, border)
+        call s:create_float('Normal', {
+            \ 'row': row + 1,
+            \ 'col': col + 2,
+            \ 'width': width - 4,
+            \ 'height': height - 2,
+            \ })
+        exe 'au BufWipeout <buffer> bw '..frame
+    else
+        let frame = s:create_popup_window(a:border_highlight, {
+            \ 'line': row,
+            \ 'col': col,
+            \ 'width': width,
+            \ 'height': height,
+            \ 'is_frame': 1,
+            \ })
+        call setbufline(frame, 1, border)
+        call s:create_popup_window('Normal', {
+            \ 'line': row + 1,
+            \ 'col': col + 2,
+            \ 'width': width - 4,
+            \ 'height': height - 2,
+            \ })
+    endif
+endfu
+
+fu s:create_float(hl, opts) abort
+    let buf = nvim_create_buf(v:false, v:true)
+    let opts = extend({'relative': 'editor', 'style': 'minimal'}, a:opts)
+    let win = nvim_open_win(buf, v:true, opts)
+    call setwinvar(win, '&winhighlight', 'NormalFloat:'..a:hl)
+    return buf
+endfu
+
+fu s:create_popup_window(hl, opts) abort
+    if has_key(a:opts, 'is_frame')
+        let id = popup_create('', #{
+            \ line: a:opts.line,
+            \ col: a:opts.col,
+            \ minwidth: a:opts.width,
+            \ minheight: a:opts.height,
+            \ zindex: 50,
+            \ })
+        call setwinvar(id, '&wincolor', a:hl)
+        exe 'au BufWipeout * ++once call popup_close('..id..')'
+        return winbufnr(id)
+    else
+        let buf = term_start(&shell, #{hidden: 1})
+        call popup_create(buf, #{
+            \ line: a:opts.line,
+            \ col: a:opts.col,
+            \ minwidth: a:opts.width,
+            \ minheight: a:opts.height,
+            \ zindex: 51,
+            \ })
+        exe 'au BufWipeout * ++once bw! '..buf
+    endif
+endfu
+
+command! -bang -nargs=? -complete=dir Files
+    \ call fzf#vim#files(<q-args>, {'options': ['--layout=reverse', '--info=inline', '--preview', '~/.vim/plugged/fzf.vim/bin/preview.sh {}']}, <bang>0)
+
+"endif
+
+"
 " BACKUP & VIMINFO
+"
+
 if $XDG_CACHE_HOME
   set backup
   silent !mkdir -p $XDG_CACHE_HOME/vim
   set viminfo+=n$XDG_CACHE_HOME/vim/viminfo
   set backupdir=$XDG_CACHE_HOME/vim
+  set directory=$XDG_CACHE_HOME/vim
 else
   set backup
   silent !mkdir -p $HOME/.cache/vim
   set viminfo+=n$HOME/.cache/vim/viminfo
   set backupdir=$HOME/.cache/vim
+  set directory=$HOME/.cache/vim
 endif
 set viminfo='20,\"50
 
+set hidden
 set history=5000
 set ruler	   	" show the cursor position all the time
 set showcmd		" display incomplete commands
@@ -62,10 +242,9 @@ if !exists(":DiffOrig")
 command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
       \ | wincmd p | diffthis
 endif
-nmap <leader>diff :DiffOrig<cr>
 
 " FILE DISPLAY OPTIONS
-set foldcolumn=2
+set foldcolumn=1
 set number
 set relativenumber
 set numberwidth=5
@@ -108,32 +287,47 @@ set ffs=unix,dos,mac
 
 " TABS
 set smarttab
-set noexpandtab
 set shiftwidth=4
-set softtabstop=4
-set tabstop=8
+set softtabstop=0 noexpandtab
+set tabstop=4
 
 " INDENT
 set ai "Auto indent
 set si "Smart indent
 set wrap "Wrap lines
 
-" FILE BROWSER
-let g:netrw_banner=0
-let g:netrw_preview=1
-let g:netrw_alto=1
-let g:netrw_winsize=25
-let g:netrw_listtyle=3
-let g:netrw_bannerw_liststyle=3
-let g:netrw_browse_split=1
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_browse_split = 4
+let g:netrw_altv = 1
+let g:netrw_winsize = 25
+augroup ProjectDrawer
+  autocmd!
+  autocmd VimEnter * :Vexplore
+augroup END
+
+" " FILE BROWSER
+" let g:netrw_banner=0
+" let g:netrw_preview=1
+" let g:netrw_alto=1
+" let g:netrw_winsize=25
+" let g:netrw_listtyle=3
+" let g:netrw_bannerw_liststyle=3
+" let g:netrw_browse_split=1
+" " cause working directory to be consistent with browsing directory
+" let g:netrw_keepdir=0
 
 " Let 'tl' toggle between this and the last accessed tab
 let g:lasttab = 1
 au TabLeave * let g:lasttab = tabpagenr()
 
-colorscheme 0o
+colorscheme dim_modded
+set background=dark
 
 let mapleader = ";"
+
+vmap <leader>c :Commentary<cr>
+nmap <leader>diff :DiffOrig<cr>
 
 " SAVING
 command W w !sudo tee % > /dev/null
@@ -144,9 +338,16 @@ nmap <leader>w :w!<cr>
 nmap <leader>/ :Lines<cr>
 nmap <leader>b/ :BLines<cr>
 nmap <leader>h/ :History:<cr>
-nmap <leader>f/ :Files<cr>
+nmap <leader>e :Files<cr>
+
+nmap <C-e>l :Lexplore!<cr>
+nmap <C-e>r :Vexplore<cr>
 
 " SPLIT WINDOW
+nmap <C-j> :belowright split<cr>
+nmap <C-k> :split<cr>
+nmap <C-h> :vsplit<cr>
+nmap <C-l> :belowright vsplit<cr>
 nmap <leader>sj :belowright split<cr>
 nmap <leader>sk :split<cr>
 nmap <leader>sh :vsplit<cr>
@@ -176,3 +377,10 @@ nmap <leader><C-l> <C-w>>
 nmap <leader>D <C-w>q
 " pane fullscreen
 nmap <leader>f <C-w>l
+
+
+" Plugins need to be added to runtimepath before helptags can be generated.
+packloadall
+" Load all of the helptags now, after plugins have been loaded.
+" All messages and errors will be ignored.
+silent! helptags ALL
