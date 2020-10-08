@@ -13,6 +13,9 @@
 [submodule "pack/base/start/lightline"]
 	path = pack/base/start/lightline
 	url = https://github.com/itchyny/lightline.vim
+[submodule "pack/base/start/lightline-ale"]
+	path = pack/base/start/lightline-ale
+	url = https://github.com/maximbaz/lightline-ale
 [submodule "pack/base/start/fugitive"]
 	path = pack/base/start/fugitive
 	url = https://github.com/tpope/vim-fugitive
@@ -23,19 +26,19 @@
 	path = pack/ava/start/ycm
 	url = https://github.com/Valloric/YouCompleteMe
 [submodule "pack/base/opt/pack/base/opt/html/emmet"]
-	path = pack/base/opt/emmet
+	path = pack/devbox/start/emmet
 	url = https://github.com/mattn/emmet-vim
 [submodule "pack/base/opt/pack/base/opt/html/html5"]
-	path = pack/base/opt/html5-syntax
+	path = pack/devbox/start/html5-syntax
 	url = https://github.com/othree/html5.vim
 [submodule "pack/base/opt/bash/bats"]
-	path = pack/base/opt/bash/bats
+	path = pack/base/start/bats
 	url = https://github.com/vim-scripts/bats.vim
 [submodule "pack/base/opt/go/go-syntax"]
-	path = pack/base/opt/go-syntax
+	path = pack/devbox/start/go-syntax
 	url = https://github.com/fatih/vim-go
 [submodule "pack/base/opt/asciidoc/asciidoctor-syntax"]
-	path = pack/base/opt/asciidoc/asciidoctor-syntax
+	path = pack/devbox/start/asciidoctor-syntax
 	url = https://github.com/habamax/vim-asciidoctor
 [submodule "pack/base/start/asyncrun"]
 	path = pack/base/start/asyncrun
@@ -43,9 +46,6 @@
 [submodule "pack/base/start/asynctasks"]
 	path = pack/base/start/asynctasks
 	url = https://github.com/skywind3000/asynctasks.vim
-[submodule "pack/shell/opt/vim-jq"]
-	path = pack/shell/opt/vim-jq
-	url = https://github.com/bfrg/vim-jq
 [submodule "pack/base/start/vim-polyglot"]
 	path = pack/base/start/vim-polyglot
 	url = https://github.com/sheerun/vim-polyglot
@@ -73,3 +73,6 @@
 [submodule "pack/base/start/gutentags"]
 	path = pack/base/start/gutentags
 	url = https://github.com/ludovicchabant/vim-gutentags
+[submodule "pack/base/start/auto-pairs"]
+	path = pack/base/start/auto-pairs
+	url = git://github.com/jiangmiao/auto-pairs.git

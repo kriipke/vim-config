@@ -14,26 +14,26 @@ let mapleader = ";"
 filetype plugin indent on
 syntax on
 
+colorscheme dim_modded
+set background=dark
+
+let g:icon_readonly = ' '
+let g:icon_info = ''
+let g:icon_info_alt = ''
+let g:icon_warning = ' ' 
+let g:icon_error = ' '
+let g:icon_branch = ' '
+
+"
+" NERDTree
+"
 nmap <leader>e :NERDTreeToggle<CR>
 let NERDTreeMinimalUI=1
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
-"" [hex reference]  /  [icons-in-terminal reference]
-" 0xE0A2 / powerline_readonly
-let g:icon_readonly = ' '
-" 0xE1EC / fa_info
-let g:icon_info = ''
-" 0xE38A / md_warning
-let g:icon_info_alt = ''
-let g:icon_warning = ' ' 
-" 0xE388 / md_error
-let g:icon_error = ' '
-let g:icon_branch = ' '
 "
 " lightline
 "
-colorscheme dim_modded
-set background=dark
 
 let g:lightline = {
 \ 'separator': { 'left': '', 'right': '' },
@@ -69,9 +69,8 @@ let g:lightline.active = {
 \ }
 
 let g:lightline.component_function = {
-\   'gitbranch': 'LightlineFutigive',
-\   'readonly': 'LightlineReadonly',
-\   'fugitive': 'FugitiveStatusline'
+\   'gitbranch': 'LightlineFugitive',
+\   'readonly': 'LightlineReadonly'
 \ }
 
 let g:lightline#ale#indicator_checking = "\uf110"
@@ -93,6 +92,11 @@ return ''
 endfunction
 
 "
+" Fugitive
+"
+nmap <leader>gs :tab :Gstatus<cr>
+nmap <leader>gl :tab :Gclog<cr>
+"
 " ALE
 "
 
@@ -105,7 +109,8 @@ let g:ale_sign_error = g:icon_error
 
 let g:ale_fixers = {}
 let g:ale_fixers.html = ['prettier', 'html-beautify']
-let g:ale_fixers.python = ['black']
+let g:ale_fixers.python = ['black', 'yapf']
+let g:ale_linters.python = ['flake8', 'pylint']
 let g:ale_fixers.sh = ['shfmt']
 let g:ale_fixers.go = ['gofmt']
 let g:ale_fixers.css = ['prettier']
@@ -126,12 +131,6 @@ let g:nnn#action = {
 "
 " FZF
 "
-
-" let g:fzf_action = {
-"   \ '<c-t>': 'tab split',
-"   \ '<c-x>': 'split',
-"   \ '<c-v>': 'vsplit',
-"   \ '<c-q>': function('s:build_quickfix_list') }
 
 " alll this mess creates pop-up windows for :FZF commands, see:
 " --> https://github.com/junegunn/fzf.vim/issues/821
@@ -270,14 +269,12 @@ endif
 set foldcolumn=1
 set number
 nmap <leader>rnu :set rnu!<cr>
-nmap <leader>nu :set nu!<cr>
 set numberwidth=5
 " Show @@@ in the last line if it is truncated.
 set display=truncate
 
 set laststatus=2
 " " Format the status line
-" set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
 
 " always keep at least 7 lines above/below the cursor
 set scrolloff=7
@@ -315,26 +312,15 @@ set softtabstop=0
 set tabstop=4
 
 " INDENT
-set ai "Auto indent
-set si "Smart indent
-set wrap "Wrap lines
+set autoindent
+set smartindent
+set wrap
 
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 let g:netrw_browse_split = 4
 let g:netrw_altv = 1
 let g:netrw_winsize = 25
-
-" " FILE BROWSER
-" let g:netrw_banner=0
-" let g:netrw_preview=1
-" let g:netrw_alto=1
-" let g:netrw_winsize=25
-" let g:netrw_listtyle=3
-" let g:netrw_bannerw_liststyle=3
-" let g:netrw_browse_split=1
-" " cause working directory to be consistent with browsing directory
-" let g:netrw_keepdir=0
 
 " Let 'tl' toggle between this and the last accessed tab
 let g:lasttab = 1
@@ -349,6 +335,10 @@ nmap <leader>diff :DiffOrig<cr>
 command W w !sudo tee % > /dev/null
 nmap <leader>W :W<cr>
 nmap <leader>w :w!<cr>
+
+" TAGBAR
+nmap <leader>tt :TagbarToggle<cr>
+nmap <leader>t :TagbarOpenAutoClose<cr>
 
 " FZF
 nmap <leader>b :Buffers<cr>
@@ -365,10 +355,6 @@ nmap <C-j> :belowright split<cr>
 nmap <C-k> :split<cr>
 nmap <C-h> :vsplit<cr>
 nmap <C-l> :belowright vsplit<cr>
-nmap <leader>sj :belowright split<cr>
-nmap <leader>sk :split<cr>
-nmap <leader>sh :vsplit<cr>
-nmap <leader>sl :belowright vsplit<cr>
 
 " NEW WINDOW
 nmap <leader>J :belowright new +Files.<cr>
@@ -381,11 +367,11 @@ nmap <leader>k <C-w>k
 nmap <leader>j <C-w>j
 nmap <leader>h <C-w>h
 nmap <leader>l <C-w>l
-nmap <leader><space> <C-w>P
+nmap <leader><space> <C-w>p
 
 " RESIZE WINDOW
-nmap <leader><C-j> <C-w>-
-nmap <leader><C-k> <C-w>+
+nmap <leader><C-down> <C-w>-
+nmap <leader><C-up> <C-w>+
 nmap <leader><C-h> <C-w><
 nmap <leader><C-l> <C-w>>
 
@@ -395,9 +381,6 @@ nmap <leader>D <C-w>q
 " pane fullscreen
 nmap <leader>f <C-w>l
 
-
-" Plugins need to be added to runtimepath before helptags can be generated.
-"packloadall
 " Load all of the helptags now, after plugins have been loaded.
 " All messages and errors will be ignored.
 silent! helptags ALL
