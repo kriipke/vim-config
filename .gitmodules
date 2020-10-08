@@ -53,10 +53,10 @@
 	path = pack/base/start/nnn.vim
 	url = https://github.com/mcchrish/nnn.vim
 [submodule "pack/python/start/black"]
-	path = pack/base/start/black
+	path = pack/devbox/start/black
 	url = https://github.com/psf/black
 [submodule "pack/python/start/vim-virtualenv"]
-	path = pack/python/start/vim-virtualenv
+	path = pack/devbox/start/vim-virtualenv
 	url = https://github.com/jmcantrell/vim-virtualenv
 [submodule "pack/base/start/patchreview"]
 	path = pack/base/start/patchreview
@@ -76,3 +76,9 @@
 [submodule "pack/base/start/auto-pairs"]
 	path = pack/base/start/auto-pairs
 	url = git://github.com/jiangmiao/auto-pairs.git
+[submodule "pack/base/start/ale"]
+	path = pack/base/start/ale
+	url = https://github.com/dense-analysis/ale.git
+[submodule "pack/base/start/nerdtree-git-plugin"]
+	path = pack/base/start/nerdtree-git-plugin
+	url = https://github.com/Xuyuanp/nerdtree-git-plugin

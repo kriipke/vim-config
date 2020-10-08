@@ -31,6 +31,28 @@ nmap <leader>e :NERDTreeToggle<CR>
 let NERDTreeMinimalUI=1
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
+" start NERDTree if vim is opened without a file
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
+let g:NERDTreeDirArrowExpandable = ''
+let g:NERDTreeDirArrowCollapsible = ' '
+"
+" NERDTree Git
+
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+                \ 'Modified'  :'',
+                \ 'Staged'    :'',
+                \ 'Untracked' :'',
+                \ 'Renamed'   :'',
+                \ 'Unmerged'  :'',
+                \ 'Deleted'   :'',
+                \ 'Dirty'     :'✗',
+                \ 'Ignored'   :'',
+                \ 'Clean'     :'',
+                \ 'Unknown'   :'',
+                \ }
+
 "
 " lightline
 "
@@ -329,12 +351,15 @@ au TabLeave * let g:lasttab = tabpagenr()
 
 
 vmap <leader>c :Commentary<cr>
-nmap <leader>diff :DiffOrig<cr>
+nmap <leader>d :DiffOrig<cr>
 
 " SAVING
 command W w !sudo tee % > /dev/null
 nmap <leader>W :W<cr>
 nmap <leader>w :w!<cr>
+
+nmap <leader>q :q<cr>
+nmap <leader>qq :qa<cr>
 
 " TAGBAR
 nmap <leader>tt :TagbarToggle<cr>
