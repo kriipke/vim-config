@@ -9,13 +9,31 @@ set nocompatible
 silent! endwhile
 
 set rtp+=/usr/local/lib/fzf
+let mapleader = ";"
 
 filetype plugin indent on
 syntax on
 
+nmap <leader>e :NERDTreeToggle<CR>
+let NERDTreeMinimalUI=1
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+"" [hex reference]  /  [icons-in-terminal reference]
+" 0xE0A2 / powerline_readonly
+let g:icon_readonly = ' '
+" 0xE1EC / fa_info
+let g:icon_info = ''
+" 0xE38A / md_warning
+let g:icon_info_alt = ''
+let g:icon_warning = ' ' 
+" 0xE388 / md_error
+let g:icon_error = ' '
+let g:icon_branch = ' '
 "
 " lightline
 "
+colorscheme dim_modded
+set background=dark
 
 let g:lightline = {
 \ 'separator': { 'left': '', 'right': '' },
@@ -23,7 +41,7 @@ let g:lightline = {
 \ }
 
 let g:lightline.component = {
-\   'lineinfo': ' %3l:%-2c',
+\   'lineinfo': '%3l:%-2c',
 \ }
 
 let g:lightline.component_expand = {
@@ -51,25 +69,25 @@ let g:lightline.active = {
 \ }
 
 let g:lightline.component_function = {
-\   'gitbranch': 'FugitiveHead',
+\   'gitbranch': 'LightlineFutigive',
 \   'readonly': 'LightlineReadonly',
-\   'fugitive': 'LightlineFugitive'
+\   'fugitive': 'FugitiveStatusline'
 \ }
 
 let g:lightline#ale#indicator_checking = "\uf110"
 let g:lightline#ale#indicator_infos = "\uf129"
-let g:lightline#ale#indicator_warnings = "\uf071"
-let g:lightline#ale#indicator_errors = "\uf05e"
+let g:lightline#ale#indicator_warnings = "\uf071 "
+let g:lightline#ale#indicator_errors = "\uf05e "
 let g:lightline#ale#indicator_ok = "\uf00c"
 
 function! LightlineReadonly()
-return &readonly ? '' : ''
+return &readonly ? ' ' : ''
 endfunction
 
 function! LightlineFugitive()
 if exists('*FugitiveHead')
 	let branch = FugitiveHead()
-	return branch !=# '' ? ''.branch : ''
+	return branch !=# '' ? ' '.branch : ''
 endif
 return ''
 endfunction
@@ -80,11 +98,16 @@ endfunction
 
 nmap <silent> <C-e> <Plug>(ale_next_wrap)
 
-let g:ale_sign_error = '●'
-let g:ale_sign_warning = '.'
+let g:ale_sign_column_always = 1
+let g:ale_sign_info = g:icon_info_alt
+let g:ale_sign_warning = g:icon_warning
+let g:ale_sign_error = g:icon_error
 
 let g:ale_fixers = {}
-let g:ale_fixers.html = ['prettier']
+let g:ale_fixers.html = ['prettier', 'html-beautify']
+let g:ale_fixers.python = ['black']
+let g:ale_fixers.sh = ['shfmt']
+let g:ale_fixers.go = ['gofmt']
 let g:ale_fixers.css = ['prettier']
 let g:ale_fixers.json = ['fixjson', 'prettier', 'jq']
 let g:ale_fixers['*'] = ['remove_trailing_lines', 'trim_whitespace']
@@ -94,7 +117,7 @@ let g:ale_fixers['*'] = ['remove_trailing_lines', 'trim_whitespace']
 "
 
 let $NNN_TRASH=1
-let g:nnn#layout = { 'window': { 'width': 0.9, 'height': 0.6, 'highlight': 'Debug' } }
+let g:nnn#layout = { 'window': { 'width': 0.7, 'height': 0.8, 'highlight': 'LineNr' } }
 let g:nnn#action = {
       \ '<c-t>': 'tab split',
       \ '<c-x>': 'split',
@@ -104,11 +127,11 @@ let g:nnn#action = {
 " FZF
 "
 
-let g:fzf_action = {
-  \ '<c-t>': 'tab split',
-  \ '<c-x>': 'split',
-  \ '<c-v>': 'vsplit',
-  \ '<c-q>': function('s:build_quickfix_list') }
+" let g:fzf_action = {
+"   \ '<c-t>': 'tab split',
+"   \ '<c-x>': 'split',
+"   \ '<c-v>': 'vsplit',
+"   \ '<c-q>': function('s:build_quickfix_list') }
 
 " alll this mess creates pop-up windows for :FZF commands, see:
 " --> https://github.com/junegunn/fzf.vim/issues/821
@@ -246,16 +269,15 @@ endif
 " FILE DISPLAY OPTIONS
 set foldcolumn=1
 set number
-set relativenumber
+nmap <leader>rnu :set rnu!<cr>
+nmap <leader>nu :set nu!<cr>
 set numberwidth=5
 " Show @@@ in the last line if it is truncated.
 set display=truncate
 
-" STATUS LINE
-" Always show the status line
 set laststatus=2
-" Format the status line
-set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
+" " Format the status line
+" set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
 
 " always keep at least 7 lines above/below the cursor
 set scrolloff=7
@@ -263,10 +285,10 @@ set scrolloff=7
 " LOCALE
 let $LANG='en'
 set langmenu=en
-set encoding=utf8
+set encoding=UTF-8
 
-" source $VIMRUNTIME/delmenu.vim
-" source $VIMRUNTIME/menu.vim
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
 
 set ignorecase
 set smartcase
@@ -287,8 +309,9 @@ set ffs=unix,dos,mac
 
 " TABS
 set smarttab
+set noexpandtab
 set shiftwidth=4
-set softtabstop=0 noexpandtab
+set softtabstop=0
 set tabstop=4
 
 " INDENT
@@ -301,10 +324,6 @@ let g:netrw_liststyle = 3
 let g:netrw_browse_split = 4
 let g:netrw_altv = 1
 let g:netrw_winsize = 25
-augroup ProjectDrawer
-  autocmd!
-  autocmd VimEnter * :Vexplore
-augroup END
 
 " " FILE BROWSER
 " let g:netrw_banner=0
@@ -321,10 +340,7 @@ augroup END
 let g:lasttab = 1
 au TabLeave * let g:lasttab = tabpagenr()
 
-colorscheme dim_modded
-set background=dark
 
-let mapleader = ";"
 
 vmap <leader>c :Commentary<cr>
 nmap <leader>diff :DiffOrig<cr>
@@ -335,10 +351,11 @@ nmap <leader>W :W<cr>
 nmap <leader>w :w!<cr>
 
 " FZF
+nmap <leader>b :Buffers<cr>
 nmap <leader>/ :Lines<cr>
 nmap <leader>b/ :BLines<cr>
 nmap <leader>h/ :History:<cr>
-nmap <leader>e :Files<cr>
+nmap <leader>// :Files<cr>
 
 nmap <C-e>l :Lexplore!<cr>
 nmap <C-e>r :Vexplore<cr>
@@ -380,7 +397,7 @@ nmap <leader>f <C-w>l
 
 
 " Plugins need to be added to runtimepath before helptags can be generated.
-packloadall
+"packloadall
 " Load all of the helptags now, after plugins have been loaded.
 " All messages and errors will be ignored.
 silent! helptags ALL
