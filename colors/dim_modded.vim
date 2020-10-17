@@ -67,5 +67,7 @@ else
 		highlight CursorLine 	ctermfg=none ctermbg=233		cterm=None
 		highlight CursorLineNr 			ctermfg=236  cterm=None
 		highlight LineNr 			ctermfg=234
+		highlight SpecialKey	ctermfg=233 ctermbg=None
+		highlight Folded			ctermfg=236 ctermbg=232
 	endif
 endif

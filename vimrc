@@ -8,26 +8,56 @@ silent! while 0
 set nocompatible
 silent! endwhile
 
-set rtp+=/usr/local/lib/fzf
-let mapleader = ";"
+" LOCALE
+let $LANG='en'
+set langmenu=en
+set encoding=UTF-8
 
+let mapleader = ";"
 filetype plugin indent on
 syntax on
 
-colorscheme dim_modded
 set background=dark
+colorscheme dim_modded
+
+set listchars=tab:\|\
+set list
+
+" Enable folding
+set foldmethod=indent
+set foldlevel=99
+set foldcolumn=0
 
 let g:icon_readonly = ' '
 let g:icon_info = ''
 let g:icon_info_alt = ''
-let g:icon_warning = ' ' 
+let g:icon_warning = ' '
 let g:icon_error = ' '
 let g:icon_branch = ' '
 
 "
-" NERDTree
+"  AsyncRun
 "
-nmap <leader>e :NERDTreeToggle<CR>
+
+let g:asyncrun_open = 8
+
+"
+"  Gutentags
+"
+
+let g:gutentags_ctags_tagfile = '.tags'
+" let g:gutentags_ctags_extra_args = [ '-f', '.tags' ]
+
+"
+"  Tagbar
+"
+
+autocmd FileType * nested :call tagbar#autoopen(1)
+
+"
+"  NERDTree
+"
+
 let NERDTreeMinimalUI=1
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
@@ -37,62 +67,65 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
 let g:NERDTreeDirArrowExpandable = ''
 let g:NERDTreeDirArrowCollapsible = ' '
+
 "
-" NERDTree Git
+"  NERDTree Git
+"
 
 let g:NERDTreeGitStatusIndicatorMapCustom = {
-                \ 'Modified'  :'',
-                \ 'Staged'    :'',
-                \ 'Untracked' :'',
-                \ 'Renamed'   :'',
-                \ 'Unmerged'  :'',
-                \ 'Deleted'   :'',
-                \ 'Dirty'     :'✗',
-                \ 'Ignored'   :'',
-                \ 'Clean'     :'',
-                \ 'Unknown'   :'',
-                \ }
+\	'Modified'  :'',
+\	'Staged'    :'',
+\	'Untracked' :'',
+\	'Renamed'   :'',
+\	'Unmerged'  :'',
+\	'Deleted'   :'',
+\	'Dirty'     :'✗',
+\	'Ignored'   :'',
+\	'Clean'     :'',
+\	'Unknown'   :'',
+\ }
 
 "
-" lightline
+"  lightline
 "
 
 let g:lightline = {
-\ 'separator': { 'left': '', 'right': '' },
-\ 'subseparator': { 'left': '', 'right': '' }
+\	'separator': { 'left': '', 'right': '' },
+\	'subseparator': { 'left': '', 'right': '' }
 \ }
 
 let g:lightline.component = {
-\   'lineinfo': '%3l:%-2c',
+\	'lineinfo': '%3l:%-2c',
 \ }
 
 let g:lightline.component_expand = {
-  \  'linter_checking': 'lightline#ale#checking',
-  \  'linter_infos': 'lightline#ale#infos',
-  \  'linter_warnings': 'lightline#ale#warnings',
-  \  'linter_errors': 'lightline#ale#errors',
-  \  'linter_ok': 'lightline#ale#ok',
-  \ }
+\	'linter_checking': 'lightline#ale#checking',
+\	'linter_infos': 'lightline#ale#infos',
+\	'linter_warnings': 'lightline#ale#warnings',
+\	'linter_errors': 'lightline#ale#errors',
+\	'linter_ok': 'lightline#ale#ok',
+\ }
+
 let g:lightline.component_type = {
-  \     'linter_checking': 'right',
-  \     'linter_infos': 'right',
-  \     'linter_warnings': 'warning',
-  \     'linter_errors': 'error',
-  \     'linter_ok': 'right',
-  \ }
+\	'linter_checking': 'right',
+\	'linter_infos': 'right',
+\	'linter_warnings': 'warning',
+\	'linter_errors': 'error',
+\	'linter_ok': 'right',
+\ }
 
 let g:lightline.active = {
-\   'left': [ [ 'mode', 'paste' ],
+\	'left': [ [ 'mode', 'paste' ],
 \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ],
-\   'right': [[ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ],
+\	'right': [[ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ],
 \	    [ 'lineinfo' ],
 \	    [ 'percent' ],
 \	    [ 'fileformat', 'fileencoding', 'filetype' ] ]
 \ }
 
 let g:lightline.component_function = {
-\   'gitbranch': 'LightlineFugitive',
-\   'readonly': 'LightlineReadonly'
+\	'gitbranch': 'LightlineFugitive',
+\	'readonly': 'LightlineReadonly'
 \ }
 
 let g:lightline#ale#indicator_checking = "\uf110"
@@ -114,33 +147,33 @@ return ''
 endfunction
 
 "
-" Fugitive
-"
-nmap <leader>gs :tab :Gstatus<cr>
-nmap <leader>gl :tab :Gclog<cr>
-"
 " ALE
 "
 
-nmap <silent> <C-e> <Plug>(ale_next_wrap)
-
-let g:ale_sign_column_always = 1
-let g:ale_sign_info = g:icon_info_alt
-let g:ale_sign_warning = g:icon_warning
-let g:ale_sign_error = g:icon_error
+let g:ale_fix_on_save = 1
+let g:ale_lint_on_save = 1
 
 let g:ale_fixers = {}
+let g:ale_linters = {}
+
+" Python
+let g:ale_python_auto_pipenv = 1
+let g:ale_fixers.python = ['black', 'isort']
+
 let g:ale_fixers.html = ['prettier', 'html-beautify']
-let g:ale_fixers.python = ['black', 'yapf']
-let g:ale_linters.python = ['flake8', 'pylint']
+let g:ale_fixers.css = ['prettier', 'stylelint']
 let g:ale_fixers.sh = ['shfmt']
 let g:ale_fixers.go = ['gofmt']
-let g:ale_fixers.css = ['prettier']
 let g:ale_fixers.json = ['fixjson', 'prettier', 'jq']
 let g:ale_fixers['*'] = ['remove_trailing_lines', 'trim_whitespace']
 
+let g:ale_sign_column_always = 1
+let g:ale_sign_info = ''
+let g:ale_sign_warning = ' '
+let g:ale_sign_error = ' '
+
 "
-" NNN
+"  NNN
 "
 
 let $NNN_TRASH=1
@@ -151,8 +184,10 @@ let g:nnn#action = {
       \ '<c-v>': 'vsplit' }
 
 "
-" FZF
+"  FZF
 "
+
+set rtp+=/usr/local/lib/fzf
 
 " alll this mess creates pop-up windows for :FZF commands, see:
 " --> https://github.com/junegunn/fzf.vim/issues/821
@@ -241,10 +276,8 @@ endfu
 command! -bang -nargs=? -complete=dir Files
     \ call fzf#vim#files(<q-args>, {'options': ['--layout=reverse', '--info=inline', '--preview', '~/.vim/plugged/fzf.vim/bin/preview.sh {}']}, <bang>0)
 
-"endif
-
 "
-" BACKUP & VIMINFO
+"  BACKUP & VIMINFO
 "
 
 if $XDG_CACHE_HOME
@@ -271,9 +304,6 @@ set wildmenu	" display completion matches in a status line
 " allow backspacing over everything in insert mode
 set backspace=indent,eol,start
 
-set ttimeout		" time out for key codes
-set ttimeoutlen=50	" wait up to 50ms after Esc for special key
-
 " Do incremental searching when it's possible to timeout.
 " ( Makes search act like search in modern browsers )
 set incsearch
@@ -288,9 +318,7 @@ command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
 endif
 
 " FILE DISPLAY OPTIONS
-set foldcolumn=1
 set number
-nmap <leader>rnu :set rnu!<cr>
 set numberwidth=5
 " Show @@@ in the last line if it is truncated.
 set display=truncate
@@ -300,11 +328,6 @@ set laststatus=2
 
 " always keep at least 7 lines above/below the cursor
 set scrolloff=7
-
-" LOCALE
-let $LANG='en'
-set langmenu=en
-set encoding=UTF-8
 
 source $VIMRUNTIME/delmenu.vim
 source $VIMRUNTIME/menu.vim
@@ -348,63 +371,134 @@ let g:netrw_winsize = 25
 let g:lasttab = 1
 au TabLeave * let g:lasttab = tabpagenr()
 
+"
+"  KEYBINDINGS
+"
 
+let mapleader = ";"
+set ttimeout		" time out for key codes
+set ttimeoutlen=50	" wait up to 50ms after Esc for special key
 
+" MISCELLANEOUS
+
+" ;c - comment/uncomment selected lines lines
 vmap <leader>c :Commentary<cr>
+" toggle relative line numbers
+nmap <leader>rnu :set rnu!<cr>
+" space - folder/unfold
+nnoremap <space> za
+
+nmap <leader>[ ysiW[
+nmap <leader>( ysiW(
+nmap <leader>{ ysiW{
+nmap <leader>' ysiW'
+nmap <leader>" ysiW"
+
+" CHANGES & GIT
+
+" ;d - show changes made since file was last saved
 nmap <leader>d :DiffOrig<cr>
+" ;gs - show status of current Git repository in a new tab
+nmap <leader>gs :tab :Gstatus<cr>
+" ;gl - show Git log in a new tab
+nmap <leader>gl :tab :Gclog<cr>
 
 " SAVING
-command W w !sudo tee % > /dev/null
+
+" ;W - save using sudo
 nmap <leader>W :W<cr>
+" ;w - save (force)
 nmap <leader>w :w!<cr>
 
+" QUITTING VIM
+
+" ;q - quit current buffer
 nmap <leader>q :q<cr>
+" ;qq - quit all buffers
 nmap <leader>qq :qa<cr>
 
-" TAGBAR
-nmap <leader>tt :TagbarToggle<cr>
-nmap <leader>t :TagbarOpenAutoClose<cr>
+" NAVIGATING WITHIN & BETWEEN FILES
 
-" FZF
+" C-e - jump to next syntax error
+nmap <silent> <C-e> <Plug>(ale_next_wrap)
+" C-E - jump to previous syntax error
+nmap <silent> <C-E> <Plug>(ale_previous_wrap)
+
+" ;n - toggle nnn file manager / file selector
+nmap <leader>n :NnnPicker<cr>
+
+" ;e - toggle NERDTree
+nmap <leader>e :NERDTreeToggleVCS<cr>
+
+" ;el - toggle netrw explorer on the left
+nmap <leader>el :Lexplore!<cr>
+" ;er - toggle netrw explorer on the right
+nmap <leader>er :Vexplore<cr>
+
+" ;tt - open/close tagbar
+nmap <leader>t :TagbarToggle<cr>
+" ;t - temporarily open tagbar to jump to a particular tag
+nmap <leader>tt :TagbarOpenAutoClose<cr>
+
+" C-/ - fuzzy find lines in all open buffers
+nmap C-/ :Lines<cr>
+" ;/ - fuzzy find lines in current buffer
+nmap <leader>/ :BLines<cr>
+" ;f - fuzzy find files in current working directory
+nmap <leader>f :Files<cr>
+" ;b - fuzzy find open buffers
 nmap <leader>b :Buffers<cr>
-nmap <leader>/ :Lines<cr>
-nmap <leader>b/ :BLines<cr>
-nmap <leader>h/ :History:<cr>
-nmap <leader>// :Files<cr>
+" ;cmd - fuzzy find previously run Vim commands
+nmap <leader>cmd :History<cr>
+" ;help - fuzzy find Vim help tags
+nmap <leader>help :Helptags<cr>
 
-nmap <C-e>l :Lexplore!<cr>
-nmap <C-e>r :Vexplore<cr>
+" CHANGE WINDOW - move the cursor to the window...
 
-" SPLIT WINDOW
-nmap <C-j> :belowright split<cr>
-nmap <C-k> :split<cr>
-nmap <C-h> :vsplit<cr>
-nmap <C-l> :belowright vsplit<cr>
-
-" NEW WINDOW
-nmap <leader>J :belowright new +Files.<cr>
-nmap <leader>K :new +Files.<cr>
-nmap <leader>H :vnew +Files.<cr>
-nmap <leader>L :belowright vnew +Files.<cr>
-
-" CHANGE WINDOW
+" ;k - above current one
 nmap <leader>k <C-w>k
+" ;j - below current one
 nmap <leader>j <C-w>j
+" ;h - to the left of the current one
 nmap <leader>h <C-w>h
+" ;l - to the right of the current one
 nmap <leader>l <C-w>l
+" ;<space> - previously selected
 nmap <leader><space> <C-w>p
 
-" RESIZE WINDOW
-nmap <leader><C-down> <C-w>-
-nmap <leader><C-up> <C-w>+
-nmap <leader><C-h> <C-w><
-nmap <leader><C-l> <C-w>>
 
-" MISC WINDOW
-" pane exit
-nmap <leader>D <C-w>q
-" pane fullscreen
-nmap <leader>f <C-w>l
+" SPLIT WINDOW - split current window, creating a new view of the current buffer...
+
+" C-j - below the current one
+nmap <C-j> :belowright split<cr>
+" C-k - above the current one
+nmap <C-k> :split<cr>
+" C-h - to the left of the current one
+nmap <C-h> :vsplit<cr>
+" C-l - to the right of the current one
+nmap <C-l> :belowright vsplit<cr>
+
+" NEW WINDOW - create a new window and interactive choose and open buffer to populate it
+
+" ;J - below the current window
+nmap <leader>J :belowright new +Buffers<cr>
+" ;K - above the current window
+nmap <leader>K :new +Buffers<cr>
+" ;H - to the left the current window
+nmap <leader>H :vnew +Buffers<cr>
+" ;L - to the right of the current window
+nmap <leader>L :belowright vnew +Buffers<cr>
+
+" RESIZE WINDOW
+
+" C-down - upwards
+nmap <C-down> <C-w>-
+" C-down - downwards
+nmap <C-up> <C-w>+
+" C-right - to the left
+nmap <C-right> <C-w><
+" C-left - to the right
+nmap <C-left> <C-w>>
 
 " Load all of the helptags now, after plugins have been loaded.
 " All messages and errors will be ignored.
