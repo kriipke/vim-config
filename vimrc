@@ -3,6 +3,10 @@ if &compatible
 set nocompatible
 endif
 
+if has('nvim')
+  autocmd TermOpen * setlocal nonumber norelativenumber
+endif
+
 " trick to ensure nocompat is set in the absence of +eval feature
 silent! while 0
 set nocompatible
@@ -12,13 +16,21 @@ silent! endwhile
 let $LANG='en'
 set langmenu=en
 set encoding=UTF-8
+set guifont=Guifont DejaVu Sans Mono:h16
 
 let mapleader = ";"
 filetype plugin indent on
 syntax on
 
-set background=dark
-colorscheme dim_modded
+set background=light
+colorscheme PaperColor
+let g:PaperColor_Theme_Options = {
+  \   'theme': {
+  \     'default': {
+  \       'transparent_background': 0
+  \     }
+  \   }
+  \ }
 
 set listchars=tab:\|\
 set list
@@ -45,7 +57,7 @@ let g:asyncrun_open = 8
 "  Gutentags
 "
 
-let g:gutentags_ctags_tagfile = '.tags'
+" let g:gutentags_ctags_tagfile = '.tags'
 " let g:gutentags_ctags_extra_args = [ '-f', '.tags' ]
 
 "
@@ -65,27 +77,27 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
-let g:NERDTreeDirArrowExpandable = ''
-let g:NERDTreeDirArrowCollapsible = ' '
-
+let g:NERDTreeDirArrowExpandable = ' '
+let g:NERDTreeDirArrowCollapsible = ' '
+  " Can be enabled or disabled
+  "
+let g:webdevicons_enable_nerdtree = 1
 "
 "  NERDTree Git
 "
 
 let g:NERDTreeGitStatusIndicatorMapCustom = {
-\	'Modified'  :'',
-\	'Staged'    :'',
-\	'Untracked' :'',
-\	'Renamed'   :'',
-\	'Unmerged'  :'',
-\	'Deleted'   :'',
-\	'Dirty'     :'✗',
-\	'Ignored'   :'',
-\	'Clean'     :'',
-\	'Unknown'   :'',
-\ }
-
-"
+                \ 'Modified'  :'✹',
+                \ 'Staged'    :'✚',
+                \ 'Untracked' :'✭',
+                \ 'Renamed'   :'➜',
+                \ 'Unmerged'  :'═',
+                \ 'Deleted'   :'✖',
+                \ 'Dirty'     :'✗',
+                \ 'Ignored'   :'☒',
+                \ 'Clean'     :'✔︎',
+                \ 'Unknown'   :'?',
+                \ }"
 "  lightline
 "
 
@@ -155,8 +167,11 @@ let g:ale_lint_on_save = 1
 
 let g:ale_fixers = {}
 let g:ale_linters = {}
+let g:ale_json_jq_executable = '/opt/homebrew/bin/jq'
 
-" Python
+let g:ale_fixers.json  = [ 'fixjson' ]
+let g:ale_linters.json = [ 'jq' ]
+
 let g:ale_python_auto_pipenv = 1
 let g:ale_fixers.python = ['black', 'isort']
 
@@ -187,7 +202,7 @@ let g:nnn#action = {
 "  FZF
 "
 
-set rtp+=/usr/local/lib/fzf
+set rtp+=/opt/homebrew/bin/fzf
 
 " alll this mess creates pop-up windows for :FZF commands, see:
 " --> https://github.com/junegunn/fzf.vim/issues/821
@@ -236,7 +251,7 @@ fu s:fzf_window(width, height, border_highlight) abort
             \ 'col': col + 2,
             \ 'width': width - 4,
             \ 'height': height - 2,
-            \ })
+           \ })
     endif
 endfu
 
@@ -274,7 +289,7 @@ fu s:create_popup_window(hl, opts) abort
 endfu
 
 command! -bang -nargs=? -complete=dir Files
-    \ call fzf#vim#files(<q-args>, {'options': ['--layout=reverse', '--info=inline', '--preview', '~/.vim/plugged/fzf.vim/bin/preview.sh {}']}, <bang>0)
+    \ call fzf#vim#files(<q-args>, {'options': ['--layout=reverse', '--info=inline', '--preview', '~/.vim/pack/base/start/fzf.vim/bin/preview.sh {}']}, <bang>0)
 
 "
 "  BACKUP & VIMINFO

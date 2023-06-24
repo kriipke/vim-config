@@ -15,7 +15,7 @@
 	url = https://github.com/maximbaz/lightline-ale
 [submodule "pack/base/start/fugitive"]
 	path = pack/base/start/fugitive
-	url = https://github.com/tpope/vim-fugitive
+	url = https://tpope.io/vim/fugitive.git
 [submodule "pack/base/start/vimux"]
 	path = pack/base/start/vimux
 	url = https://github.com/benmills/vimux
@@ -79,3 +79,15 @@
 [submodule "pack/base/start/nerdtree-git-plugin"]
 	path = pack/base/start/nerdtree-git-plugin
 	url = https://github.com/Xuyuanp/nerdtree-git-plugin
+[submodule "pack/base/start/vim-devicons"]
+	path = pack/base/start/vim-devicons
+	url = https://github.com/ryanoasis/vim-devicons
+[submodule "pack/base/start/papercolor-theme"]
+	path = pack/base/start/papercolor-theme
+	url = https://github.com/NLKNguyen/papercolor-theme
+[submodule "pack/base/start/yanil"]
+	path = pack/base/start/yanil
+	url = https://github.com/Xuyuanp/yanil
+[submodule "pack/base/start/vcf.vim"]
+	path = pack/base/start/vcf.vim
+	url = https://gitlab.com/ceda_ei/vcf.vim

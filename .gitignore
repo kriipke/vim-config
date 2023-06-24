@@ -1,4 +1,6 @@
+.DS_Store
+pack/*
+/pack/*
 /bundle/*
 !/bundle/Vundle.vim
 /tutor/
-
